@@ -1,8 +1,17 @@
+/*
+  ==============================================================================
+
+    This file contains the basic framework code for a JUCE plugin processor.
+
+  ==============================================================================
+*/
+
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
 //==============================================================================
 PluginProcessor::PluginProcessor()
+#ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
@@ -11,6 +20,7 @@ PluginProcessor::PluginProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        )
+#endif
 {
 }
 
@@ -69,19 +79,15 @@ int PluginProcessor::getCurrentProgram()
 
 void PluginProcessor::setCurrentProgram (int index)
 {
-    juce::ignoreUnused (index);
 }
 
 const juce::String PluginProcessor::getProgramName (int index)
 {
-    juce::ignoreUnused (index);
-    // Steinberg's VST3 validator fails plugins whose single default program has no name
-    return "Default";
+    return {};
 }
 
 void PluginProcessor::changeProgramName (int index, const juce::String& newName)
 {
-    juce::ignoreUnused (index, newName);
 }
 
 //==============================================================================
@@ -89,7 +95,6 @@ void PluginProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-    juce::ignoreUnused (sampleRate, samplesPerBlock);
 }
 
 void PluginProcessor::releaseResources()
@@ -98,6 +103,7 @@ void PluginProcessor::releaseResources()
     // spare memory, etc.
 }
 
+#ifndef JucePlugin_PreferredChannelConfigurations
 bool PluginProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
   #if JucePlugin_IsMidiEffect
@@ -106,6 +112,8 @@ bool PluginProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
   #else
     // This is the place where you check if the layout is supported.
     // In this template code we only support mono or stereo.
+    // Some plugin hosts, such as certain GarageBand versions, will only
+    // load plugins that support stereo bus layouts.
     if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
      && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
         return false;
@@ -119,12 +127,10 @@ bool PluginProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
     return true;
   #endif
 }
+#endif
 
-void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
-                                              juce::MidiBuffer& midiMessages)
+void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    juce::ignoreUnused (midiMessages);
-
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
@@ -147,7 +153,7 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
-        juce::ignoreUnused (channelData);
+
         // ..do something to the data...
     }
 }
@@ -169,14 +175,12 @@ void PluginProcessor::getStateInformation (juce::MemoryBlock& destData)
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
-    juce::ignoreUnused (destData);
 }
 
 void PluginProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
-    juce::ignoreUnused (data, sizeInBytes);
 }
 
 //==============================================================================
