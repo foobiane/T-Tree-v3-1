@@ -10,14 +10,19 @@ ConfigMenu::ConfigMenu(PluginEditor& editor, DefaultMenu& defaultMenu) :
     defaultMenu(defaultMenu),
     backButton(std::make_unique<MenuButton>("> Back", [this](){ backButtonTask(); }))
 {
-    auto updateJson = [this](juce::Label& l, const std::string& jsonKey){
-        config[jsonKey] = l.getText().toStdString();
+    auto updateJson = [this](juce::Label& l, const std::string& jsonKey, bool isNumber = false){
+        if (isNumber) {
+            config[jsonKey] = std::stoi(l.getText().toStdString());
+        }
+        else {
+            config[jsonKey] = l.getText().toStdString();
+        }
     };
 
     configTextEntries.push_back(std::move(std::make_unique<MenuTextEntry>("SSID", std::bind(updateJson, _1, "wifiSSID"))));
     configTextEntries.push_back(std::move(std::make_unique<MenuTextEntry>("Password", std::bind(updateJson, _1, "wifiPSK"))));
     configTextEntries.push_back(std::move(std::make_unique<MenuTextEntry>("Destination IP", std::bind(updateJson, _1, "oscIP1"))));
-    configTextEntries.push_back(std::move(std::make_unique<MenuTextEntry>("Destination Port", std::bind(updateJson, _1, "oscPORT1"))));
+    configTextEntries.push_back(std::move(std::make_unique<MenuTextEntry>("Destination Port", std::bind(updateJson, _1, "oscPORT1", true))));
 
     for (auto& configTextEntry : configTextEntries) {
         addAndMakeVisible(*configTextEntry);

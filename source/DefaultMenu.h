@@ -25,7 +25,7 @@ private:
     };
 
     struct TStickInfo {
-        TStickInfo(const std::string& name, PuaraAPI::SerialManager::SerialPort& port, TStickStatus status, std::unique_ptr<MenuButton> configButton) :
+        TStickInfo(const std::string& name, PuaraAPI::SerialManager::SerialPort& port, TStickStatus status, std::shared_ptr<MenuButton> configButton) :
             name(name),
             port(port),
             status(status),
@@ -33,9 +33,9 @@ private:
         {}
 
         std::string name;
-        PuaraAPI::SerialManager::SerialPort& port;
+        PuaraAPI::SerialManager::SerialPort port;
         TStickStatus status;
-        std::unique_ptr<MenuButton> configButton;
+        std::shared_ptr<MenuButton> configButton;
     };
 
     std::vector<PuaraAPI::SerialManager::SerialPort> ports;
@@ -59,19 +59,6 @@ private:
      * Task that runs when the "> Edit Config" button is pressed
      */
     void editConfigTask();
-
-    /**
-     * Thread that runs when the T-Stick needs to be configured in the background
-     */
-    class BackgroundTStickConfigurerThread : public juce::Thread {
-    public:
-        BackgroundTStickConfigurerThread(DefaultMenu& menu, std::shared_ptr<TStickInfo>& info);
-        virtual void run();
-
-        DefaultMenu& menu;
-        std::shared_ptr<TStickInfo> info;
-    };
-    friend class BackgroundTStickConfigurerThread;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DefaultMenu)
 };

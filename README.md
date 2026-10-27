@@ -1,3 +1,1 @@
 # T-Tree v3.1: Automated T-Stick serial configurer using `idmil-puara-serial-library`
-
-## 
