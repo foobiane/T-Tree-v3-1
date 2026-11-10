@@ -3,6 +3,11 @@
 #include "DefaultMenu.h"
 #include "PluginEditor.h"
 
+#include <filesystem>
+#include <fstream>
+#include <string>
+
+namespace fs = std::filesystem;
 using std::placeholders::_1;
 
 ConfigMenu::ConfigMenu(PluginEditor& editor, DefaultMenu& defaultMenu) :
@@ -10,6 +15,11 @@ ConfigMenu::ConfigMenu(PluginEditor& editor, DefaultMenu& defaultMenu) :
     defaultMenu(defaultMenu),
     backButton(std::make_unique<MenuButton>("> Back", [this](){ backButtonTask(); }))
 {
+    if (fs::exists(fs::path("./default.json"))) {
+        std::ifstream defaultConfigStream("./default.json");
+        config = json::parse(defaultConfigStream);
+    }
+
     auto updateJson = [this](juce::Label& l, const std::string& jsonKey, bool isNumber = false){
         if (isNumber) {
             config[jsonKey] = std::stoi(l.getText().toStdString());
@@ -19,10 +29,18 @@ ConfigMenu::ConfigMenu(PluginEditor& editor, DefaultMenu& defaultMenu) :
         }
     };
 
-    configTextEntries.push_back(std::move(std::make_unique<MenuTextEntry>("SSID", std::bind(updateJson, _1, "wifiSSID"))));
-    configTextEntries.push_back(std::move(std::make_unique<MenuTextEntry>("Password", std::bind(updateJson, _1, "wifiPSK"))));
-    configTextEntries.push_back(std::move(std::make_unique<MenuTextEntry>("Destination IP", std::bind(updateJson, _1, "oscIP1"))));
-    configTextEntries.push_back(std::move(std::make_unique<MenuTextEntry>("Destination Port", std::bind(updateJson, _1, "oscPORT1", true))));
+    configTextEntries.push_back(std::move(std::make_unique<MenuTextEntry>(
+        "SSID", std::bind(updateJson, _1, "wifiSSID"), config["wifiSSID"]
+    )));
+    configTextEntries.push_back(std::move(std::make_unique<MenuTextEntry>(
+        "Password", std::bind(updateJson, _1, "wifiPSK"), config["wifiPSK"]
+    )));
+    configTextEntries.push_back(std::move(std::make_unique<MenuTextEntry>(
+        "Destination IP", std::bind(updateJson, _1, "oscIP1"), config["oscIP1"]
+    )));
+    configTextEntries.push_back(std::move(std::make_unique<MenuTextEntry>(
+        "Destination Port", std::bind(updateJson, _1, "oscPORT1", true), std::to_string(config["oscPORT1"].get<unsigned>())
+    )));
 
     for (auto& configTextEntry : configTextEntries) {
         addAndMakeVisible(*configTextEntry);

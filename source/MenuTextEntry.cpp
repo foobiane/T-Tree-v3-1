@@ -1,7 +1,7 @@
 #include "Globals.h"
 #include "MenuTextEntry.h"
 
-MenuTextEntry::MenuTextEntry(const std::string& labelText, std::function<void(juce::Label&)> onTextChange) {
+MenuTextEntry::MenuTextEntry(const std::string& labelText, std::function<void(juce::Label&)> onTextChange, const std::string& initialText) {
     textEntry.onTextChange = [onTextChange, this](){ onTextChange(this->textEntry); };
 
     label.setFont(APP_FONT);
@@ -12,6 +12,11 @@ MenuTextEntry::MenuTextEntry(const std::string& labelText, std::function<void(ju
     textEntry.setColour(juce::Label::ColourIds::outlineColourId, juce::Colours::grey);
 
     label.setText(labelText, juce::NotificationType::dontSendNotification);
+
+    if (!initialText.empty()) {
+        textEntry.setText(initialText, juce::NotificationType::dontSendNotification);
+    }
+
     textEntry.setEditable(true);
 
     addAndMakeVisible(label);
