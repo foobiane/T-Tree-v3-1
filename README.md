@@ -2,7 +2,7 @@
 
 ## Build From Source
 
-**Requirements: Git, CMake
+**Requirements: Git, CMake**
 
 Run the following in your terminal:
 
