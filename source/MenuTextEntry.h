@@ -4,12 +4,12 @@
 
 class MenuTextEntry : public juce::Component {
 public:
-    MenuTextEntry(const std::string& labelText, std::function<void(juce::Label&)> onTextChange, const std::string& initialText = "");
+    MenuTextEntry(const std::string& labelText, std::function<void(juce::TextEditor&)> onTextChange, const std::string& backgroundText, const std::string& initialText = "");
 
     virtual void resized();
     virtual void paint(juce::Graphics& g);
 
 private:
     juce::Label label;
-    juce::Label textEntry;
+    juce::TextEditor textEntry;
 };

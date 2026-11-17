@@ -19,8 +19,8 @@ PluginEditor::PluginEditor(PluginProcessor& p) :
     configMenu(*this, defaultMenu),
     activeMenu(&defaultMenu)
 {
-    // setSize(800, 450);
-    juce::Desktop::getInstance().setKioskModeComponent(this); // maximizes the editor
+    auto monitorArea = getParentMonitorArea();
+    setSize(monitorArea.getWidth(), monitorArea.getHeight());
     addAndMakeVisible(activeMenu);
 }
 

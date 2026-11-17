@@ -1,23 +1,28 @@
 #include "Globals.h"
 #include "MenuTextEntry.h"
 
-MenuTextEntry::MenuTextEntry(const std::string& labelText, std::function<void(juce::Label&)> onTextChange, const std::string& initialText) {
+MenuTextEntry::MenuTextEntry(const std::string& labelText, std::function<void(juce::TextEditor&)> onTextChange, const std::string& backgroundText, const std::string& initialText) {
     textEntry.onTextChange = [onTextChange, this](){ onTextChange(this->textEntry); };
+    textEntry.onReturnKey = [this](){ juce::Component::unfocusAllComponents(); };
+    textEntry.onEscapeKey = textEntry.onReturnKey;
 
     label.setFont(APP_FONT);
     textEntry.setFont(APP_FONT);
 
     label.setColour(juce::Label::ColourIds::textColourId, juce::Colours::white);
-    textEntry.setColour(juce::Label::ColourIds::textColourId, juce::Colours::white);
-    textEntry.setColour(juce::Label::ColourIds::outlineColourId, juce::Colours::grey);
+    textEntry.setColour(juce::TextEditor::ColourIds::textColourId, juce::Colours::white);
+    textEntry.setColour(juce::TextEditor::ColourIds::outlineColourId, juce::Colours::grey);
+    textEntry.setColour(juce::TextEditor::ColourIds::backgroundColourId, juce::Colours::transparentBlack);
 
     label.setText(labelText, juce::NotificationType::dontSendNotification);
 
-    if (!initialText.empty()) {
-        textEntry.setText(initialText, juce::NotificationType::dontSendNotification);
+    if (!backgroundText.empty()) {
+        textEntry.setTextToShowWhenEmpty(backgroundText, juce::Colours::grey);
     }
 
-    textEntry.setEditable(true);
+    if (!initialText.empty()) {
+        textEntry.setText(initialText);
+    }
 
     addAndMakeVisible(label);
     addAndMakeVisible(textEntry);

@@ -20,26 +20,26 @@ ConfigMenu::ConfigMenu(PluginEditor& editor, DefaultMenu& defaultMenu) :
         config = json::parse(defaultConfigStream);
     }
 
-    auto updateJson = [this](juce::Label& l, const std::string& jsonKey, bool isNumber = false){
+    auto updateJson = [this](juce::TextEditor& e, const std::string& jsonKey, bool isNumber = false){
         if (isNumber) {
-            config[jsonKey] = std::stoi(l.getText().toStdString());
+            config[jsonKey] = std::stoi(e.getText().toStdString());
         }
         else {
-            config[jsonKey] = l.getText().toStdString();
+            config[jsonKey] = e.getText().toStdString();
         }
     };
 
     configTextEntries.push_back(std::move(std::make_unique<MenuTextEntry>(
-        "SSID", std::bind(updateJson, _1, "wifiSSID"), config["wifiSSID"]
+        "SSID", std::bind(updateJson, _1, "wifiSSID"), "ssid", (config.contains("wifiSSID") ? config["wifiSSID"] : "")
     )));
     configTextEntries.push_back(std::move(std::make_unique<MenuTextEntry>(
-        "Password", std::bind(updateJson, _1, "wifiPSK"), config["wifiPSK"]
+        "Password", std::bind(updateJson, _1, "wifiPSK"), "password", (config.contains("wifiPSK") ? config["wifiPSK"] : "")
     )));
     configTextEntries.push_back(std::move(std::make_unique<MenuTextEntry>(
-        "Destination IP", std::bind(updateJson, _1, "oscIP1"), config["oscIP1"]
+        "Destination IP", std::bind(updateJson, _1, "oscIP1"), "192.168.1.2", (config.contains("oscIP1") ? config["oscIP1"] : "")
     )));
     configTextEntries.push_back(std::move(std::make_unique<MenuTextEntry>(
-        "Destination Port", std::bind(updateJson, _1, "oscPORT1", true), std::to_string(config["oscPORT1"].get<unsigned>())
+        "Destination Port", std::bind(updateJson, _1, "oscPORT1", true), "8000", (config.contains("oscPORT1") ? std::to_string(config["oscPORT1"].get<unsigned>()) : "")
     )));
 
     for (auto& configTextEntry : configTextEntries) {

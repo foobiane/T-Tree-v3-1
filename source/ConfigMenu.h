@@ -26,10 +26,5 @@ private:
 
     void backButtonTask();
 
-    json config = {
-        {"wifiSSID", "ssid"},
-        {"wifiPSK", "password"},
-        {"oscIP1", "192.168.1.2"},
-        {"oscPORT1", 8000}
-    };
+    json config;
 };
