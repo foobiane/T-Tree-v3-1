@@ -2,11 +2,12 @@
 
 #include "DefaultMenu.h"
 #include "PluginEditor.h"
-#include "Utilities.h"
 
+#include <filesystem>
 #include <fstream>
 #include <string>
 
+namespace fs = std::filesystem;
 using std::placeholders::_1;
 
 ConfigMenu::ConfigMenu(PluginEditor& editor, DefaultMenu& defaultMenu) :
@@ -14,14 +15,10 @@ ConfigMenu::ConfigMenu(PluginEditor& editor, DefaultMenu& defaultMenu) :
     defaultMenu(defaultMenu),
     backButton(std::make_unique<MenuButton>("> Back", [this](){ backButtonTask(); }))
 {
-    fs::path binaryLocation = Utilities::getBinaryLocation();
-
+    fs::path binaryLocation = fs::current_path();
     std::cout << "Application path: " + binaryLocation.string() << std::endl;
 
-    fs::path potentialDefaultJsonPath = binaryLocation; 
-    potentialDefaultJsonPath /= "..";
-    potentialDefaultJsonPath /= fs::path("default.json");
-    potentialDefaultJsonPath = fs::canonical(potentialDefaultJsonPath);
+    fs::path potentialDefaultJsonPath = binaryLocation.append("default.json");
 
     if (fs::exists(potentialDefaultJsonPath)) {
         std::ifstream defaultConfigStream(potentialDefaultJsonPath.string());

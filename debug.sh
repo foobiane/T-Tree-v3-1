@@ -1,1 +1,1 @@
-lldb -o run "Builds/T-Tree-v3-1_artefacts/Debug/Standalone/T-Tree v3.1.app"
+cd "Builds/T-Tree-v3-1_artefacts/Debug/Standalone/" && lldb -o run "T-Tree v3.1.app"
