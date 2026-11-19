@@ -23,7 +23,7 @@ void DefaultMenu::configureTask(const std::string& name) {
     std::shared_ptr<PuaraAPI::SerialManager::ChangeConfigProgress> progress = std::make_shared<PuaraAPI::SerialManager::ChangeConfigProgress>();
 
     // Config progress watch thread
-    juce::Thread::launch([this, info, progress](){
+    juce::Thread::launch([&](){
         std::unique_lock lk(progress->mtx);
 
         {
@@ -44,7 +44,7 @@ void DefaultMenu::configureTask(const std::string& name) {
     });
 
     // Main configuration thread
-    juce::Thread::launch([this, info, progress](){
+    juce::Thread::launch([&](){
         PuaraAPI::SerialManager::changeConfig(info->port, configMenu.getConfig(), progress.get());
         
         info->status = TStickStatus::CONFIGURED;
@@ -55,13 +55,21 @@ void DefaultMenu::configureTask(const std::string& name) {
             info->configButton->setSubText("");
             resized();
         }
+
+        juce::Thread::sleep(3'000);
+
+        {
+            juce::MessageManagerLock mmLock;
+            tStickInfos.erase(info->name);
+            resized();
+        }
     });
 }
 
 void DefaultMenu::scanTask() {
     scanButton->setText("> Scanning...");
 
-    juce::Thread::launch([this](){
+    juce::Thread::launch([&](){
         std::vector<PuaraAPI::SerialManager::SerialPort> ports; 
         PuaraAPI::SerialManager::scan(ports);
 

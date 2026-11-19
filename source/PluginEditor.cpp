@@ -20,7 +20,12 @@ PluginEditor::PluginEditor(PluginProcessor& p) :
     activeMenu(&defaultMenu)
 {
     auto monitorArea = getParentMonitorArea();
-    setSize(monitorArea.getWidth(), monitorArea.getHeight());
+    setSize(monitorArea.getWidth(), monitorArea.getHeight() - 50);
+
+    // setOpaque(false);
+    // addToDesktop(0);
+    // juce::Desktop::getInstance().setKioskModeComponent(this, false);
+
     addAndMakeVisible(activeMenu);
 }
 
