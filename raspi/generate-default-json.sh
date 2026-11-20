@@ -6,7 +6,12 @@ args=("$@")
 
 ssid="ttree3"
 pw="ttree3_2026"
-ip=$(ifconfig wlan1 | awk '/inet / {print $2}')
+ip=""
+
+while [ ! -z "$ip" -a "ip" == " " ] do
+    ip=$(ifconfig wlan1 | awk '/inet / {print $2}')
+done
+
 port="8000"
 
 cat << EOF > ${args[0]}/default.json
