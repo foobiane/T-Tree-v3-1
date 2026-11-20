@@ -8,7 +8,7 @@ ssid="ttree3"
 pw="ttree3_2026"
 ip=""
 
-while [ ! -z "$ip" -a "ip" == " " ] do
+while [ ! "$ip" = "" ] do
     ip=$(ifconfig wlan1 | awk '/inet / {print $2}')
 done
 
