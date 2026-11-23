@@ -19,7 +19,7 @@ private:
     ConfigMenu& configMenu; 
 
     struct TStickInfo {
-        TStickInfo(const std::string& name, PuaraAPI::SerialManager::SerialPort& port, std::shared_ptr<MenuButton> configButton) :
+        TStickInfo(const std::string& name, PuaraAPI::SerialManager::SerialPort& port, bool isConfiguring, std::shared_ptr<MenuButton> configButton) :
             name(name),
             port(port),
             configButton(std::move(configButton))
@@ -27,6 +27,7 @@ private:
 
         std::string name;
         PuaraAPI::SerialManager::SerialPort port;
+        bool isConfiguring;
         std::shared_ptr<MenuButton> configButton;
     };
 

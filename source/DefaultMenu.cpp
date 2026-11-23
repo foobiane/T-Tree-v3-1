@@ -44,6 +44,7 @@ void DefaultMenu::configureTask(const std::string& name) {
 
     // Main configuration thread
     juce::Thread::launch([this, info, progress](){
+        info->isConfiguring = true;
         PuaraAPI::SerialManager::ChangeConfigResult res = PuaraAPI::SerialManager::changeConfig(info->port, configMenu.getConfig(), progress.get());
 
         {
@@ -62,6 +63,7 @@ void DefaultMenu::configureTask(const std::string& name) {
             }
             
             info->configButton->setSubText("");
+            info->isConfiguring = false;
             resized();
         }
 
@@ -80,9 +82,16 @@ void DefaultMenu::scanTask() {
 
     juce::Thread::launch([&](){
         std::vector<PuaraAPI::SerialManager::SerialPort> ports; 
-        PuaraAPI::SerialManager::scan(ports);
 
-        // todo: skip configuring ports
+        // Skipping ports that are already being configured
+        std::vector<PuaraAPI::SerialManager::SerialPort> configuringPorts;
+        for (auto& [k, v] : tStickInfos) {
+            if (v->isConfiguring) {
+                configuringPorts.push_back(v->port);
+            }
+        }
+
+        PuaraAPI::SerialManager::scan(ports, configuringPorts);
 
         std::vector<std::string> names = PuaraAPI::SerialManager::sendCommandMultiple(ports, "whatareyou");
 
@@ -95,6 +104,7 @@ void DefaultMenu::scanTask() {
                 tStickInfos[name] = std::make_shared<TStickInfo>(
                     name,
                     ports[i],
+                    false,
                     configButton
                 );
 
