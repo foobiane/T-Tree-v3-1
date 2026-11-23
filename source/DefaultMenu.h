@@ -18,23 +18,15 @@ private:
     PluginEditor& editor;
     ConfigMenu& configMenu; 
 
-    enum TStickStatus {
-        DETECTED,
-        CONFIGURING,
-        CONFIGURED
-    };
-
     struct TStickInfo {
-        TStickInfo(const std::string& name, PuaraAPI::SerialManager::SerialPort& port, TStickStatus status, std::shared_ptr<MenuButton> configButton) :
+        TStickInfo(const std::string& name, PuaraAPI::SerialManager::SerialPort& port, std::shared_ptr<MenuButton> configButton) :
             name(name),
             port(port),
-            status(status),
             configButton(std::move(configButton))
         {}
 
         std::string name;
         PuaraAPI::SerialManager::SerialPort port;
-        TStickStatus status;
         std::shared_ptr<MenuButton> configButton;
     };
 

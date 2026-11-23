@@ -16,7 +16,6 @@ DefaultMenu::DefaultMenu(PluginEditor& editor, ConfigMenu& configMenu) :
 void DefaultMenu::configureTask(const std::string& name) {
     std::shared_ptr<TStickInfo> info = tStickInfos[name];
 
-    info->status = TStickStatus::CONFIGURING;
     info->configButton->toggleActivated();
     info->configButton->setText("> Configuring " + info->name + "...");
 
@@ -45,13 +44,23 @@ void DefaultMenu::configureTask(const std::string& name) {
 
     // Main configuration thread
     juce::Thread::launch([this, info, progress](){
-        PuaraAPI::SerialManager::changeConfig(info->port, configMenu.getConfig(), progress.get());
-        
-        info->status = TStickStatus::CONFIGURED;
+        PuaraAPI::SerialManager::ChangeConfigResult res = PuaraAPI::SerialManager::changeConfig(info->port, configMenu.getConfig(), progress.get());
 
         {
             juce::MessageManagerLock mmLock;
-            info->configButton->setText("> Configured " + info->name + "!");
+
+            switch (res) {
+                case PuaraAPI::SerialManager::ChangeConfigResult::SUCCESS: {
+                    info->configButton->setText("> Configured " + info->name + "!");
+                }
+                case PuaraAPI::SerialManager::ChangeConfigResult::TIMEOUT: {
+                    info->configButton->setText("> Failed to Configure " + info->name + ": Timeout", juce::Colours::red);
+                }
+                case PuaraAPI::SerialManager::ChangeConfigResult::COMMAND_LENGTH_EXCEEDED: {
+                    info->configButton->setText("> Failed to Configure " + info->name + ": Command Length Exceeded", juce::Colours::red);
+                }
+            }
+            
             info->configButton->setSubText("");
             resized();
         }
@@ -86,7 +95,6 @@ void DefaultMenu::scanTask() {
                 tStickInfos[name] = std::make_shared<TStickInfo>(
                     name,
                     ports[i],
-                    TStickStatus::DETECTED,
                     configButton
                 );
 
