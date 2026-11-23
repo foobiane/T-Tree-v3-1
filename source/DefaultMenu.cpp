@@ -73,6 +73,8 @@ void DefaultMenu::scanTask() {
         std::vector<PuaraAPI::SerialManager::SerialPort> ports; 
         PuaraAPI::SerialManager::scan(ports);
 
+        // todo: skip configuring ports
+
         std::vector<std::string> names = PuaraAPI::SerialManager::sendCommandMultiple(ports, "whatareyou");
 
         for (size_t i = 0; i < names.size(); i++) {

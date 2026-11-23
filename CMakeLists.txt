@@ -156,7 +156,7 @@ target_link_libraries(SharedCode
     INTERFACE
     Assets
     melatonin_inspector
-    SerialManager
+    IDMIL_PUARA_SERIAL_LIBRARY_SERIAL_MANAGER
     juce_audio_utils
     juce_audio_processors
     juce_dsp
