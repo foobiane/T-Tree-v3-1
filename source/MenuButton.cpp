@@ -12,8 +12,8 @@ MenuButton::MenuButton(const std::string& text, const std::function<void()>& onC
     id++;
 }
 
-void MenuButton::setText(const std::string& text, juce::Colour textColour) {
-    this->textColour = textColour;
+void MenuButton::setText(const std::string& text, juce::Colour customColour) {
+    // this->textColour = textColour;
     this->text = text;
     repaint();
 }
@@ -29,16 +29,23 @@ void MenuButton::toggleActivated() {
 }
 
 void MenuButton::paintButton(juce::Graphics& g, bool isHighlighted, bool isDown) {
+    juce::Colour textColour;
+
     if (activated && (isHighlighted || isDown)) {
         g.fillAll(juce::Colours::white);
-        // g.setColour(juce::Colours::black);
         textColour = juce::Colours::black;
     }
     else {
         g.fillAll(juce::Colours::black);
 
-        if (textColour == juce::Colours::white) {
-            textColour = (activated ? juce::Colours::white : juce::Colours::grey);
+        if (!activated && customColour == juce::Colours::white) {
+            textColour = juce::Colours::grey;
+        }
+        else if (customColour != juce::Colours::white) {
+            textColour = customColour;
+        }
+        else {
+            textColour = juce::Colours::white;
         }
     
         g.setColour(juce::Colours::white);
