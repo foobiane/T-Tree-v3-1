@@ -13,7 +13,7 @@ MenuButton::MenuButton(const std::string& text, const std::function<void()>& onC
 }
 
 void MenuButton::setText(const std::string& text, juce::Colour customColour) {
-    // this->textColour = textColour;
+    this->customColour = customColour;
     this->text = text;
     repaint();
 }

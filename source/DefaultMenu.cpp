@@ -53,9 +53,15 @@ void DefaultMenu::configureTask(const std::string& name) {
             switch (res) {
                 case PuaraAPI::SerialManager::ChangeConfigResult::SUCCESS: {
                     info->configButton->setText("> Configured " + info->name + "!");
+                    break;
                 }
                 case PuaraAPI::SerialManager::ChangeConfigResult::TIMEOUT: {
                     info->configButton->setText("> Failed to Configure " + info->name + ": Timeout", juce::Colours::red);
+                    break;
+                }
+                case PuaraAPI::SerialManager::ChangeConfigResult::COMMAND_LENGTH_EXCEEDED: {
+                    info->configButton->setText("> Failed to Configure " + info->name + ": Command Length Exceeded", juce::Colours::red);
+                    break;
                 }
             }
             
