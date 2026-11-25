@@ -3,6 +3,16 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Raspberry Pi Detection
+if(EXISTS "/proc/device-tree/model")
+    file(READ "/proc/device-tree/model" DEVICE_MODEL)
+
+    if(DEVICE_MODEL MATCHES "Raspberry Pi")
+        message(STATUS "Building on Raspberry Pi")
+        add_compile_definitions(RASPBERRY_PI_USE_VIRTUAL_KEYBOARD)
+    endif()
+endif()
+
 # This tells cmake we have goodies in the /cmake folder
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include (PamplejuceVersion)
