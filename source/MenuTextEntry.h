@@ -10,7 +10,7 @@ public:
     class VirtualKeyboardTextEntry : public juce::TextEditor {
     public:
         void focusGained(FocusChangeType) override {
-            proc.start("squeekboard");
+            proc.start("wvkbd-mobintl");
         }
         void focusLost(FocusChangeType) override {
             proc.kill();
